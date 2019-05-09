@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>SimpleHTTPClipboard - orbb.li</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 </head>
 <body>
 <p>
@@ -37,13 +37,13 @@ function Create() {
 	init();
 	$.ajax({
 		method: "POST",
-		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val(),
+		url: '/' + $('#key').val(),
 		data: {msg: $("#value").val()},
 	}).done(function(data){
 		$('#value').html(data['msg']);
 		$('#status').html('Created!');
 	}).fail(function(data){
-		$.get('https://cloud-trial-240009.appspot.com/' + $('#key').val(), function (data2){
+		$.get('/' + $('#key').val(), function (data2){
 			$('#value').html(data2['msg']);
 		});
 		$('#status').html(data.responseText);
@@ -53,10 +53,9 @@ function Read() {
 	init();
 	$.ajax({
 		method: "GET",
-		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val()
+		url: '/' + $('#key').val()
 	}).done(function(data){
-		console.log(data);
-		$('#value').html(data['msg']);
+		$('#value').html(data.replace('msg=',''));
 		$('#status').html('Read!');
 	}).fail(function(data){
 		$('#value').html('');
@@ -67,7 +66,7 @@ function Update() {
 	init();
 	$.ajax({
 		method: "POST",
-		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val(),
+		url: '/' + $('#key').val(),
 		data: {msg: $("#value").val()},
 	}).done(function(data){
 		$('#value').html(data['msg']);
@@ -81,7 +80,7 @@ function Delete() {
 	init();
 	$.ajax({
 		method: "DELETE",
-		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val()
+		url: '/' + $('#key').val()
 	}).done(function(data){
 		$('#value').html('');
 		$('#status').html('Deleted!');
