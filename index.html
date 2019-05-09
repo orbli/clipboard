@@ -37,13 +37,13 @@ function Create() {
 	init();
 	$.ajax({
 		method: "POST",
-		url: 'http://api.clipboard.orbb.li/' + $('#key').val(),
+		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val(),
 		data: {msg: $("#value").val()},
 	}).done(function(data){
 		$('#value').html(data['msg']);
 		$('#status').html('Created!');
 	}).fail(function(data){
-		$.get('http://api.clipboard.orbb.li/' + $('#key').val(), function (data2){
+		$.get('https://cloud-trial-240009.appspot.com/' + $('#key').val(), function (data2){
 			$('#value').html(data2['msg']);
 		});
 		$('#status').html(data.responseText);
@@ -53,7 +53,7 @@ function Read() {
 	init();
 	$.ajax({
 		method: "GET",
-		url: 'http://api.clipboard.orbb.li/' + $('#key').val()
+		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val()
 	}).done(function(data){
 		console.log(data);
 		$('#value').html(data['msg']);
@@ -66,8 +66,8 @@ function Read() {
 function Update() {
 	init();
 	$.ajax({
-		method: "PUT",
-		url: 'http://api.clipboard.orbb.li/' + $('#key').val(),
+		method: "POST",
+		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val(),
 		data: {msg: $("#value").val()},
 	}).done(function(data){
 		$('#value').html(data['msg']);
@@ -81,7 +81,7 @@ function Delete() {
 	init();
 	$.ajax({
 		method: "DELETE",
-		url: 'http://api.clipboard.orbb.li/' + $('#key').val()
+		url: 'https://cloud-trial-240009.appspot.com/' + $('#key').val()
 	}).done(function(data){
 		$('#value').html('');
 		$('#status').html('Deleted!');
