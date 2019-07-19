@@ -38,13 +38,13 @@ function Create() {
 	$.ajax({
 		method: "POST",
 		url: '/' + $('#key').val(),
-		data: {msg: $("#value").val()},
+		data: $("#value").val(),
 	}).done(function(data){
-		$('#value').html(data['msg']);
+		$('#value').html(data);
 		$('#status').html('Created!');
 	}).fail(function(data){
 		$.get('/' + $('#key').val(), function (data2){
-			$('#value').html(data2['msg']);
+			$('#value').html(data2);
 		});
 		$('#status').html(data.responseText);
 	});
@@ -55,7 +55,7 @@ function Read() {
 		method: "GET",
 		url: '/' + $('#key').val()
 	}).done(function(data){
-		$('#value').html(data.replace('msg=',''));
+		$('#value').html(data);
 		$('#status').html('Read!');
 	}).fail(function(data){
 		$('#value').html('');
@@ -67,9 +67,9 @@ function Update() {
 	$.ajax({
 		method: "POST",
 		url: '/' + $('#key').val(),
-		data: {msg: $("#value").val()},
+		data: $("#value").val(),
 	}).done(function(data){
-		$('#value').html(data['msg']);
+		$('#value').html(data);
 		$('#status').html('Updated!');
 	}).fail(function(data){
 		$('#value').html('');
