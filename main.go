@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type (
@@ -71,10 +72,12 @@ func (Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetValue(key string) string {
-	if val, err := cache.Get(key).Result(); err != nil {
+	if val, err := cache.Get(key).Result(); err == redis.Nil {
+		return ""
+	} else if err != nil {
 		return err.Error()
 	} else {
-		return fmt.Sprintf("%v", val)
+		return strings.Replace(val, "redis: ", "", 1)
 	}
 }
 func SetValue(key, value string) string {
