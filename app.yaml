@@ -1,1 +1,5 @@
-runtime: go111
+runtime: go112
+
+env_variables:
+        REDIS_ADDR: 'localhost:8888'
+        REDIS_PSWD: 'password'
