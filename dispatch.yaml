@@ -1,0 +1,6 @@
+dispatch:
+  - url: "*/"
+    service: default
+
+  - url: "*/*"
+    service: clipboard

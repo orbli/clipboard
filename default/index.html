@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>SimpleHTTPClipboard - orbb.li</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+</head>
+<body>
+<p>
+<form id="keyform">
+Key:<input id="key" type="text" />
+<input type="button" value="find!" onclick="Read()"/>
+</form>
+</p>
+<p>
+<form id="valueform">
+<div>
+<input type="button" value="create" onclick="Create()"/>
+<input type="button" value="read" onclick="Read()"/>
+<input type="button" value="update" onclick="Update()"/>
+<input type="button" value="delete" onclick="Delete()"/>
+<div id="status" ></div>
+</div> <br/>
+<textarea id="value" style="width: 500px; height: 500px;" cols="800" rows="50" placeholder="You are free to type.">
+</textarea>
+</form>
+</p>
+</body>
+<script>
+function init() {
+	$('#status').html('');
+	if ($('#key').val() == '')
+	{
+		$('#status').html('cannot be no name!');
+		throw new Error("cannot be no name!");
+	}
+}
+function Create() {
+	init();
+	$.ajax({
+		method: "POST",
+		url: '/' + $('#key').val(),
+		data: $("#value").val(),
+	}).done(function(data){
+		$('#value').html(data);
+		$('#status').html('Created!');
+	}).fail(function(data){
+		$.get('/' + $('#key').val(), function (data2){
+			$('#value').html(data2);
+		});
+		$('#status').html(data.responseText);
+	});
+}
+function Read() {
+	init();
+	$.ajax({
+		method: "GET",
+		url: '/' + $('#key').val()
+	}).done(function(data){
+		$('#value').html(data);
+		$('#status').html('Read!');
+	}).fail(function(data){
+		$('#value').html('');
+		$('#status').html(data.responseText);
+	});
+}
+function Update() {
+	init();
+	$.ajax({
+		method: "POST",
+		url: '/' + $('#key').val(),
+		data: $("#value").val(),
+	}).done(function(data){
+		$('#value').html(data);
+		$('#status').html('Updated!');
+	}).fail(function(data){
+		$('#value').html('');
+		$('#status').html(data.responseText);
+	});
+}
+function Delete() {
+	init();
+	$.ajax({
+		method: "DELETE",
+		url: '/' + $('#key').val()
+	}).done(function(data){
+		$('#value').html('');
+		$('#status').html('Deleted!');
+	}).fail(function(data){
+		$('#value').html('');
+		$('#status').html(data.responseText);
+	});
+}
+
+$("form").submit(function(event){
+	event.preventDefault();
+});
+</script>
