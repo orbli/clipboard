@@ -1,13 +1,13 @@
 package main
 
 import (
-	"context"
+	"clipboard/util"
 	"fmt"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/memcache"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 )
 
 type (
@@ -15,54 +15,77 @@ type (
 )
 
 func main() {
-	log.Printf("Listening through appengine")
-	http.HandleFunc("/", Handler{}.ServeHTTP)
-	appengine.Main()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	httpServer := http.Server{
+		Addr:    fmt.Sprintf(":%s", port),
+		Handler: Handler{},
+	}
+	log.Printf("Serving http")
+	log.Fatal(httpServer.ListenAndServe())
 }
+
 func (Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
 	bodybytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprint(w, err.Error())
 	}
-	body := string(bodybytes)
-	log.Printf("Method: %s , URI: %s, Body: %s", r.Method, r.URL.Path, body)
+	key := strings.Trim(r.URL.Path, "/")
+	value := string(bodybytes)
+	log.Printf("Method: %s , Key: %s, Balue: %s", r.Method, key, value)
 	switch r.Method {
 	case "GET":
-		fmt.Fprint(w, GetValue(ctx, r.URL.Path))
+		fmt.Fprint(w, Read(key))
 	case "POST":
-		fmt.Fprint(w, SetValue(ctx, r.URL.Path, body))
+		Create(key, value)
+	case "PUT":
+		Update(key, value)
 	case "DELETE":
-		fmt.Fprint(w, DelValue(ctx, r.URL.Path))
+		Delete(key)
 	default:
 		http.NotFound(w, r)
 	}
 	return
 }
-func GetValue(ctx context.Context, key string) string {
-	if item, err := memcache.Get(ctx, key); err == memcache.ErrCacheMiss {
-		return "Error cache miss"
-	} else if err != nil {
-		return err.Error()
-	} else {
-		return string(item.Value)
+
+func Create(key, value string) {
+	SetValue(key, value)
+}
+func Read(key string) string {
+	return GetValue(key)
+}
+func Update(key, value string) {
+	SetValue(key, value)
+}
+func Delete(key string) {
+	DelValue(key)
+}
+
+var (
+	colref = util.FirestoreClient.Collection("clipboards")
+)
+
+func GetValue(key string) string {
+	data, err := colref.Doc(key).Get(util.FirestoreContext)
+	if err != nil {
+		panic(err)
+	}
+	return data.Data()["msg"].(string)
+}
+func SetValue(key, value string) {
+	rt := map[string]interface{}{
+		"msg": value,
+	}
+	_, err := colref.Doc(key).Set(util.FirestoreContext, rt)
+	if err != nil {
+		panic(err)
 	}
 }
-func SetValue(ctx context.Context, key, value string) string {
-	item := &memcache.Item{
-		Key:   key,
-		Value: []byte(value),
-	}
-	if err := memcache.Set(ctx, item); err != nil {
-		return err.Error()
-	} else {
-		return GetValue(ctx, key)
-	}
-}
-func DelValue(ctx context.Context, key string) string {
-	if err := memcache.Delete(ctx, key); err != nil {
-		return err.Error()
-	} else {
-		return ""
+func DelValue(key string) {
+	_, err := colref.Doc(key).Delete(util.FirestoreContext)
+	if err != nil {
+		panic(err)
 	}
 }
