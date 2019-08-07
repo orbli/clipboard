@@ -1,0 +1,26 @@
+stages:
+  - build
+  - push
+
+.build:
+  stage: build
+  image: golang:latest
+  before_script:
+    - cd $PRODUCT
+  script:
+    - CGO_ENABLED=0 GOOS=linux go build -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/$PRODUCT/$PRODUCT-srv
+  artifacts:
+    paths:
+      - $PRODUCT/$PRODUCT-srv
+
+.push:
+  stage: push
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/$PRODUCT --dockerfile $CI_PROJECT_DIR/$PRODUCT/Dockerfile --destination $CI_REGISTRY_IMAGE/$PRODUCT:latest
+
+include:
+  - local: '/clipboard/.gitlab-ci.yml'

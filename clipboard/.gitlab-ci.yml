@@ -1,0 +1,8 @@
+variables:
+  PRODUCT: clipboard
+
+build:clipboard:
+  extends: .build
+
+push:clipboard:
+  extends: .push

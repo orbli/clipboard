@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package orbli.micro.clipboard;
+
+service Clipboard {
+	rpc Create(Message) returns (Message) {}
+	rpc Read(Message) returns (Message) {}
+	rpc Update(Message) returns (Message) {}
+	rpc Delete(Message) returns (Message) {}
+}
+
+message Message {
+	string key = 1;
+	string value = 2;
+}
