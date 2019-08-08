@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"fmt"
-
 	"github.com/go-redis/redis"
 )
 
@@ -16,10 +14,10 @@ var (
 	_ StorageStub = StorageRedisImpl{}
 )
 
-func NewStorageRedis(host, port, password string) (*StorageRedisImpl, error) {
+func NewStorageRedis(addr, password string) (*StorageRedisImpl, error) {
 	conn := redis.NewClient(
 		&redis.Options{
-			Addr:     fmt.Sprintf("%s:%s", host, port),
+			Addr:     addr,
 			Password: password,
 		},
 	)

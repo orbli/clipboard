@@ -12,15 +12,29 @@ import (
 
 func init() {
 	if os.Getenv("USE_REDIS") == "1" {
-		host := os.Getenv("REDIS_HOST")
-		port := os.Getenv("REDIS_PORT")
-		pswd := os.Getenv("REDIS_PSWD")
-		log.Logf("Use redis: %s:%s %s", host, port, pswd)
-		storageRedis, err := storage.NewStorageRedis(host, port, pswd)
+		storageRedis, err := storage.NewStorageRedis(
+			fmt.Sprintf("%s:%s",
+				os.Getenv("REDIS_HOST"),
+				os.Getenv("REDIS_PORT"),
+			),
+			os.Getenv("REDIS_PSWD"),
+		)
 		if err != nil {
 			panic(err)
 		}
 		storage.Replace(storageRedis)
+	}
+	if os.Getenv("USE_SQL") == "1" {
+		storageGormSql, err := storage.NewStorageGormSql(
+			fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True",
+				os.Getenv("SQL_USER"),
+				os.Getenv("SQL_PSWD"),
+				os.Getenv("SQL_HOST"),
+				os.Getenv("SQL_PORT"),
+				os.Getenv("SQL_DBSE"),
+			)
+		)
+		storage.Replace(storageGormSql)
 	}
 }
 
