@@ -1,0 +1,8 @@
+variables:
+  PRODUCT: token
+
+build:token:
+  extends: .build
+
+push:token:
+  extends: .push

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package orbli.micro.token;
+
+import "google/protobuf/timestamp.proto";
+
+service TokenService {
+	rpc Create(Token) returns (Token) {}
+	rpc Read(Token) returns (Token) {}
+	rpc Update(Token) returns (Token) {}
+}
+
+message Token {
+	bytes token = 1;
+	bytes secret = 2;
+	string parent = 3;
+	bytes data = 4;
+	google.protobuf.Timestamp expire_at = 8;
+}
