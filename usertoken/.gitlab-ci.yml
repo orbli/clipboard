@@ -1,0 +1,8 @@
+variables:
+  PRODUCT: usertoken
+
+build:usertoken:
+  extends: .build
+
+push:usertoken:
+  extends: .push

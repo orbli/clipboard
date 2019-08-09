@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package orbli.micro.usertoken;
+
+service UsertokenService {
+	rpc Create(Usertoken) returns (Usertoken) {}
+	rpc Read(Usertoken) returns (Usertoken) {}
+	rpc Delete(Usertoken) returns (Usertoken) {}
+}
+
+message Usertoken {
+	uint64 user_id = 1;
+	bytes token = 2;
+}
