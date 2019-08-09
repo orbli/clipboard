@@ -3,8 +3,9 @@ package handler
 import (
 	"context"
 
+	"gitlab.com/orbli/clipboard/clipboard/model"
 	pb "gitlab.com/orbli/clipboard/clipboard/proto"
-	"gitlab.com/orbli/clipboard/clipboard/storage"
+	"gitlab.com/orbli/clipboard/util/storage"
 )
 
 type (
@@ -20,7 +21,7 @@ func (Clipboard) Create(ctx context.Context, req *pb.Message, res *pb.Message) e
 	if err != nil {
 		return err
 	}
-	if err := storage.Set(req.GetKey(), message); err != nil {
+	if err := storage.Set(message); err != nil {
 		return err
 	}
 	return Clipboard{}.Read(ctx, req, res)
@@ -31,7 +32,7 @@ func (Clipboard) Read(ctx context.Context, req *pb.Message, res *pb.Message) err
 	if err != nil {
 		return err
 	}
-	pbv, err := internalToPb(v)
+	pbv, err := internalToPb(v.(model.Message))
 	if err != nil {
 		return err
 	}
@@ -44,7 +45,7 @@ func (Clipboard) Update(ctx context.Context, req *pb.Message, res *pb.Message) e
 	if err != nil {
 		return err
 	}
-	if err := storage.Set(req.GetKey(), message); err != nil {
+	if err := storage.Set(message); err != nil {
 		return err
 	}
 	return Clipboard{}.Read(ctx, req, res)

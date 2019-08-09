@@ -38,6 +38,7 @@ type TokenService interface {
 	Create(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 	Read(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 	Update(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
+	Delete(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 }
 
 type tokenService struct {
@@ -88,12 +89,23 @@ func (c *tokenService) Update(ctx context.Context, in *Token, opts ...client.Cal
 	return out, nil
 }
 
+func (c *tokenService) Delete(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error) {
+	req := c.c.NewRequest(c.name, "TokenService.Delete", in)
+	out := new(Token)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for TokenService service
 
 type TokenServiceHandler interface {
 	Create(context.Context, *Token, *Token) error
 	Read(context.Context, *Token, *Token) error
 	Update(context.Context, *Token, *Token) error
+	Delete(context.Context, *Token, *Token) error
 }
 
 func RegisterTokenServiceHandler(s server.Server, hdlr TokenServiceHandler, opts ...server.HandlerOption) error {
@@ -101,6 +113,7 @@ func RegisterTokenServiceHandler(s server.Server, hdlr TokenServiceHandler, opts
 		Create(ctx context.Context, in *Token, out *Token) error
 		Read(ctx context.Context, in *Token, out *Token) error
 		Update(ctx context.Context, in *Token, out *Token) error
+		Delete(ctx context.Context, in *Token, out *Token) error
 	}
 	type TokenService struct {
 		tokenService
@@ -123,4 +136,8 @@ func (h *tokenServiceHandler) Read(ctx context.Context, in *Token, out *Token) e
 
 func (h *tokenServiceHandler) Update(ctx context.Context, in *Token, out *Token) error {
 	return h.TokenServiceHandler.Update(ctx, in, out)
+}
+
+func (h *tokenServiceHandler) Delete(ctx context.Context, in *Token, out *Token) error {
+	return h.TokenServiceHandler.Delete(ctx, in, out)
 }

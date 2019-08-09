@@ -8,6 +8,7 @@ service TokenService {
 	rpc Create(Token) returns (Token) {}
 	rpc Read(Token) returns (Token) {}
 	rpc Update(Token) returns (Token) {}
+	rpc Delete(Token) returns (Token) {} //deprecated. use `Update(Token{expire_at=now})` instead
 }
 
 message Token {

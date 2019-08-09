@@ -1,7 +1,12 @@
-package storage
+package model
 
 import (
+	"log"
+	"os"
+
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gitlab.com/orbli/clipboard/util/storage"
 )
 
 type (
@@ -14,7 +19,7 @@ type (
 )
 
 var (
-	_ StorageStub = StorageGormSqlImpl{}
+	_ storage.StorageStub = StorageGormSqlImpl{}
 )
 
 func NewStorageGormSql(dsn string) (*StorageGormSqlImpl, error) {
@@ -23,10 +28,12 @@ func NewStorageGormSql(dsn string) (*StorageGormSqlImpl, error) {
 		return nil, err
 	}
 	conn.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(GormToken{})
+	conn.LogMode(true)
+	conn.SetLogger(log.New(os.Stdout, "\n", 0))
 	return &StorageGormSqlImpl{conn}, nil
 }
 
-func (s StorageGormSqlImpl) Get(key string) (Token, error) {
+func (s StorageGormSqlImpl) Get(key string) (storage.Value, error) {
 	rt := new(GormToken)
 	where := &GormToken{Token: Token{Token: []byte(key)}}
 	if err := s.db.Where(where).First(rt).Error; err != nil {
@@ -35,9 +42,9 @@ func (s StorageGormSqlImpl) Get(key string) (Token, error) {
 	return rt.Token, nil
 }
 
-func (s StorageGormSqlImpl) Set(key string, value Token) error {
-	s.Delete(key)
-	return s.db.Create(&value).Error
+func (s StorageGormSqlImpl) Set(value storage.Value) error {
+	v := &GormToken{Token: value.(Token)}
+	return s.db.Model(&GormToken{}).Updates(v).Error
 }
 
 func (s StorageGormSqlImpl) Delete(key string) error {

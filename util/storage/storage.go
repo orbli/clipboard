@@ -8,8 +8,8 @@ import (
 
 type (
 	StorageStub interface {
-		Get(key string) (Message, error)
-		Set(key string, value Message) error
+		Get(key string) (Value, error)
+		Set(Value) error
 		Delete(key string) error
 	}
 )
@@ -18,9 +18,9 @@ var (
 	Storage StorageStub = StorageGocacheImpl{
 		c: cache.New(24*60*time.Minute, 48*60*time.Minute),
 	}
-	Get    func(string) (Message, error) = Storage.Get
-	Set    func(string, Message) error   = Storage.Set
-	Delete func(string) error            = Storage.Delete
+	Get    func(string) (Value, error) = Storage.Get
+	Set    func(Value) error           = Storage.Set
+	Delete func(string) error          = Storage.Delete
 )
 
 func Replace(newStorage StorageStub) {

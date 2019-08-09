@@ -1,9 +1,10 @@
-package storage
+package model
 
 import (
-	"encoding"
 	"encoding/json"
 	"time"
+
+	"gitlab.com/orbli/clipboard/util/storage"
 )
 
 type (
@@ -17,14 +18,17 @@ type (
 )
 
 var (
-	_ encoding.BinaryMarshaler   = Token{}
-	_ encoding.BinaryUnmarshaler = &Token{}
+	_ storage.Value = &Token{}
 )
 
 func (m Token) MarshalBinary() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func (m *Token) UnmarshalBinary(d []byte) error {
+func (m Token) UnmarshalBinary(d []byte) error {
 	return json.Unmarshal(d, m)
+}
+
+func (m Token) Key() string {
+	return string(m.Token)
 }

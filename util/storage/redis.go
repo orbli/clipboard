@@ -28,17 +28,17 @@ func NewStorageRedis(addr, password string) (*StorageRedisImpl, error) {
 	return &StorageRedisImpl{conn}, nil
 }
 
-func (s StorageRedisImpl) Get(key string) (Token, error) {
-	m := new(Token)
+func (s StorageRedisImpl) Get(key string) (Value, error) {
+	m := new(Value)
 	err := s.c.Get(key).Scan(m)
 	if err != nil {
-		return Token{}, err
+		return nil, err
 	}
 	return *m, nil
 }
 
-func (s StorageRedisImpl) Set(key string, value Token) error {
-	return s.c.Set(key, value, 0).Err()
+func (s StorageRedisImpl) Set(value Value) error {
+	return s.c.Set(value.Key(), value, 0).Err()
 }
 
 func (s StorageRedisImpl) Delete(key string) error {

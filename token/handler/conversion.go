@@ -2,12 +2,12 @@ package handler
 
 import (
 	"github.com/golang/protobuf/ptypes"
+	"gitlab.com/orbli/clipboard/token/model"
 	pb "gitlab.com/orbli/clipboard/token/proto"
-	"gitlab.com/orbli/clipboard/token/storage"
 )
 
-func pbToInternal(pbm *pb.Token) (*storage.Token, error) {
-	rt := &storage.Token{
+func pbToInternal(pbm *pb.Token) (model.Token, error) {
+	rt := model.Token{
 		Token:  pbm.Token,
 		Secret: pbm.Secret,
 		Parent: pbm.Parent,
@@ -21,7 +21,7 @@ func pbToInternal(pbm *pb.Token) (*storage.Token, error) {
 	return rt, nil
 }
 
-func internalToPb(sm *storage.Token) (*pb.Token, error) {
+func internalToPb(sm model.Token) (*pb.Token, error) {
 	rt := &pb.Token{
 		Token:  sm.Token,
 		Secret: sm.Secret,

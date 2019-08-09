@@ -1,22 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/util/log"
 	"gitlab.com/orbli/clipboard/clipboard/handler"
 	pb "gitlab.com/orbli/clipboard/clipboard/proto"
-	"gitlab.com/orbli/clipboard/clipboard/storage"
+	"gitlab.com/orbli/clipboard/util/storage"
 )
 
 func init() {
 	if os.Getenv("USE_REDIS") == "1" {
-		host := os.Getenv("REDIS_HOST")
-		port := os.Getenv("REDIS_PORT")
-		pswd := os.Getenv("REDIS_PSWD")
-		log.Logf("Use redis: %s:%s %s", host, port, pswd)
-		storageRedis, err := storage.NewStorageRedis(host, port, pswd)
+		storageRedis, err := storage.NewStorageRedis(
+			fmt.Sprintf("%s:%s",
+				os.Getenv("REDIS_HOST"),
+				os.Getenv("REDIS_PORT"),
+			),
+			os.Getenv("REDIS_PSWD"),
+		)
 		if err != nil {
 			panic(err)
 		}

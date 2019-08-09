@@ -1,20 +1,20 @@
 package handler
 
 import (
+	"gitlab.com/orbli/clipboard/clipboard/model"
 	pb "gitlab.com/orbli/clipboard/clipboard/proto"
-	"gitlab.com/orbli/clipboard/clipboard/storage"
 )
 
-func pbToInternal(pbm *pb.Message) (storage.Message, error) {
-	return storage.Message{
-		Key:   pbm.Key,
-		Value: pbm.Value,
+func pbToInternal(pbm *pb.Message) (model.Message, error) {
+	return model.Message{
+		KeyString: pbm.Key,
+		Value:     pbm.Value,
 	}, nil
 }
 
-func internalToPb(sm storage.Message) (*pb.Message, error) {
+func internalToPb(sm model.Message) (*pb.Message, error) {
 	return &pb.Message{
-		Key:   sm.Key,
+		Key:   sm.KeyString,
 		Value: sm.Value,
 	}, nil
 }

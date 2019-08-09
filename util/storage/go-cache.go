@@ -12,15 +12,15 @@ type (
 	}
 )
 
-func (s StorageGocacheImpl) Get(key string) (Token, error) {
+func (s StorageGocacheImpl) Get(key string) (Value, error) {
 	if value, found := s.c.Get(key); found {
-		return value.(Token), nil
+		return value.(Value), nil
 	}
-	return Token{}, errors.New("Not found")
+	return nil, errors.New("Not found")
 }
 
-func (s StorageGocacheImpl) Set(key string, value Token) error {
-	s.c.Set(key, value, cache.DefaultExpiration)
+func (s StorageGocacheImpl) Set(value Value) error {
+	s.c.Set(value.Key(), value, cache.DefaultExpiration)
 	return nil
 }
 

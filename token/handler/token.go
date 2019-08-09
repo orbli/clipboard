@@ -5,8 +5,9 @@ import (
 	"crypto/rand"
 	"time"
 
+	"gitlab.com/orbli/clipboard/token/model"
 	pb "gitlab.com/orbli/clipboard/token/proto"
-	"gitlab.com/orbli/clipboard/token/storage"
+	"gitlab.com/orbli/clipboard/util/storage"
 )
 
 type (
@@ -36,7 +37,7 @@ func (TokenService) Create(ctx context.Context, req *pb.Token, res *pb.Token) er
 		message.ExpireAt = &expireAt
 	}
 
-	if err := storage.Set(string(message.Token), *message); err != nil {
+	if err := storage.Set(message); err != nil {
 		return err
 	}
 
@@ -52,7 +53,7 @@ func (TokenService) Read(ctx context.Context, req *pb.Token, res *pb.Token) erro
 	if err != nil {
 		return err
 	}
-	pbv, err := internalToPb(&v)
+	pbv, err := internalToPb(v.(model.Token))
 	if err != nil {
 		return err
 	}
@@ -65,8 +66,15 @@ func (TokenService) Update(ctx context.Context, req *pb.Token, res *pb.Token) er
 	if err != nil {
 		return err
 	}
-	if err := storage.Set(string(message.Token), *message); err != nil {
+	if err := storage.Set(message); err != nil {
 		return err
 	}
 	return TokenService{}.Read(ctx, req, res)
+}
+
+func (TokenService) Delete(ctx context.Context, req *pb.Token, res *pb.Token) error {
+	if err := storage.Delete(string(req.GetToken())); err != nil {
+		return err
+	}
+	return nil
 }
