@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package orbli.micro.user;
+
+import "google/protobuf/any.proto";
+
+service UserService {
+	rpc Create(User) returns (User) {}
+	rpc Read(User) returns (User) {}
+	rpc Update(User) returns (User) {}
+	rpc Delete(User) returns (User) {}
+}
+
+message User {
+	uint64 id = 1;
+	string name = 2;
+	google.protobuf.Any metadata = 3;
+}

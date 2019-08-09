@@ -25,3 +25,4 @@ stages:
 include:
   - local: '/clipboard/.gitlab-ci.yml'
   - local: '/token/.gitlab-ci.yml'
+  - local: '/user/.gitlab-ci.yml'
