@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package orbli.micro.util.event;
+
+import "google/protobuf/timestamp.proto";
+
+message Event {
+	string id = 1;
+	google.protobuf.Timestamp timestamp = 2;
+    string action = 3;
+	string message = 4;
+}

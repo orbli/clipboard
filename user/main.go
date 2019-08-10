@@ -49,7 +49,12 @@ func main() {
 		micro.Version("latest"),
 	)
 	service.Init()
-	pb.RegisterUserServiceHandler(service.Server(), new(handler.UserService))
+	pb.RegisterUserServiceHandler(
+		service.Server(),
+		&handler.UserService{
+			micro.NewPublisher("orbli.micro.user", service.Client()),
+		},
+	)
 	if err := service.Run(); err != nil {
 		log.Fatal(err)
 	}

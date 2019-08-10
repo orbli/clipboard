@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"crypto/rand"
+	"errors"
 	"time"
 
 	"gitlab.com/orbli/clipboard/token/model"
@@ -75,6 +76,33 @@ func (TokenService) Update(ctx context.Context, req *pb.Token, res *pb.Token) er
 func (TokenService) Delete(ctx context.Context, req *pb.Token, res *pb.Token) error {
 	if err := storage.Delete(string(req.GetToken())); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (TokenService) DeleteParentedTokens(ctx context.Context, req *pb.Token, res *pb.Token) error {
+	key := ""
+	size := 10
+	for {
+		vs, next, err := storage.ListByKey(key, size)
+		if err != nil {
+			return err
+		}
+		if len(vs) == 0 {
+			break
+		}
+		for _, v := range vs {
+			if t, ok := v.(model.Token); ok {
+				if t.Parent == req.Parent {
+					if err = storage.Delete(string(t.Token)); err != nil {
+						return err
+					}
+				}
+			} else {
+				return errors.New("Unexpected error!")
+			}
+		}
+		key = next
 	}
 	return nil
 }

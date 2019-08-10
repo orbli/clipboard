@@ -61,3 +61,11 @@ func (s StorageGormSqlImpl) Delete(key string) error {
 	where := &GormUser{User: User{Id: keyuint64}}
 	return s.db.Where(where).Delete(&GormUser{}).Error
 }
+
+func (s StorageGormSqlImpl) ListByKey(key string, size int) ([]storage.Value, string, error) {
+	panic("Not yet implement je")
+}
+
+func (s StorageGormSqlImpl) ListByOffset(offset int, size int) ([]storage.Value, error) {
+	panic("Not yet implement je")
+}

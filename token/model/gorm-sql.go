@@ -51,3 +51,11 @@ func (s StorageGormSqlImpl) Delete(key string) error {
 	where := &GormToken{Token: Token{Token: []byte(key)}}
 	return s.db.Where(where).Delete(&GormToken{}).Error
 }
+
+func (s StorageGormSqlImpl) ListByKey(key string, size int) ([]storage.Value, string, error) {
+	panic("Not yet implement je")
+}
+
+func (s StorageGormSqlImpl) ListByOffset(offset int, size int) ([]storage.Value, error) {
+	panic("Not yet implement je")
+}

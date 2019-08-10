@@ -3,16 +3,23 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
+	"github.com/golang/protobuf/ptypes"
+	"github.com/micro/go-micro"
+	"github.com/pborman/uuid"
 	"gitlab.com/orbli/clipboard/user/model"
 	pb "gitlab.com/orbli/clipboard/user/proto"
+	pbEvent "gitlab.com/orbli/clipboard/util/proto/event"
 	"gitlab.com/orbli/clipboard/util/storage"
 )
 
 type (
-	UserService struct{}
+	UserService struct {
+		Publisher micro.Publisher
+	}
 )
 
 var (
@@ -68,7 +75,16 @@ func (UserService) Update(ctx context.Context, req *pb.User, res *pb.User) error
 	return UserService{}.Read(ctx, req, res)
 }
 
-func (UserService) Delete(ctx context.Context, req *pb.User, res *pb.User) error {
+func (us UserService) Delete(ctx context.Context, req *pb.User, res *pb.User) error {
+	ev := &pbEvent.Event{
+		Id:        uuid.NewUUID().String(),
+		Timestamp: ptypes.TimestampNow(),
+		Action:    "DELETE",
+		Message:   fmt.Sprintf("%d", req.Id),
+	}
+	if err := us.Publisher.Publish(ctx, ev); err != nil {
+		return err
+	}
 	if err := storage.Delete(strconv.FormatUint(req.Id, 10)); err != nil {
 		return err
 	}

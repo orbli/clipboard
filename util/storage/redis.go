@@ -44,3 +44,11 @@ func (s StorageRedisImpl) Set(value Value) error {
 func (s StorageRedisImpl) Delete(key string) error {
 	return s.c.Del(key).Err()
 }
+
+func (s StorageRedisImpl) ListByKey(key string, size int) ([]Value, string, error) {
+	panic("I dont think you would use redis for use case accessing this function")
+}
+
+func (s StorageRedisImpl) ListByOffset(offset int, size int) ([]Value, error) {
+	panic("I dont think you would use redis for use case accessing this function")
+}

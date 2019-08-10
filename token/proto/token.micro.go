@@ -39,6 +39,7 @@ type TokenService interface {
 	Read(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 	Update(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 	Delete(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
+	DeleteParentedTokens(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 }
 
 type tokenService struct {
@@ -99,6 +100,16 @@ func (c *tokenService) Delete(ctx context.Context, in *Token, opts ...client.Cal
 	return out, nil
 }
 
+func (c *tokenService) DeleteParentedTokens(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error) {
+	req := c.c.NewRequest(c.name, "TokenService.DeleteParentedTokens", in)
+	out := new(Token)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for TokenService service
 
 type TokenServiceHandler interface {
@@ -106,6 +117,7 @@ type TokenServiceHandler interface {
 	Read(context.Context, *Token, *Token) error
 	Update(context.Context, *Token, *Token) error
 	Delete(context.Context, *Token, *Token) error
+	DeleteParentedTokens(context.Context, *Token, *Token) error
 }
 
 func RegisterTokenServiceHandler(s server.Server, hdlr TokenServiceHandler, opts ...server.HandlerOption) error {
@@ -114,6 +126,7 @@ func RegisterTokenServiceHandler(s server.Server, hdlr TokenServiceHandler, opts
 		Read(ctx context.Context, in *Token, out *Token) error
 		Update(ctx context.Context, in *Token, out *Token) error
 		Delete(ctx context.Context, in *Token, out *Token) error
+		DeleteParentedTokens(ctx context.Context, in *Token, out *Token) error
 	}
 	type TokenService struct {
 		tokenService
@@ -140,4 +153,8 @@ func (h *tokenServiceHandler) Update(ctx context.Context, in *Token, out *Token)
 
 func (h *tokenServiceHandler) Delete(ctx context.Context, in *Token, out *Token) error {
 	return h.TokenServiceHandler.Delete(ctx, in, out)
+}
+
+func (h *tokenServiceHandler) DeleteParentedTokens(ctx context.Context, in *Token, out *Token) error {
+	return h.TokenServiceHandler.DeleteParentedTokens(ctx, in, out)
 }
