@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strconv"
+	"time"
 
 	"gitlab.com/orbli/clipboard/user/model"
 	pb "gitlab.com/orbli/clipboard/user/proto"
@@ -24,8 +25,12 @@ func (UserService) Create(ctx context.Context, req *pb.User, res *pb.User) error
 		return err
 	}
 
-	if err = (UserService{}.Read(ctx, req, res)); err == nil {
-		return errors.New("User exist!")
+	if message.Id == 0 {
+		message.Id = uint64(time.Now().UnixNano())
+	} else {
+		if err = (UserService{}.Read(ctx, req, res)); err == nil {
+			return errors.New("User exist!")
+		}
 	}
 
 	if err := storage.Set(message); err != nil {
