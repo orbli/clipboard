@@ -1,8 +1,9 @@
-variables:
-  PRODUCT: user
-
 build:user:
+  variables:
+    PRODUCT: user
   extends: .build
 
 push:user:
+  variables:
+    PRODUCT: user
   extends: .push

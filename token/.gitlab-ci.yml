@@ -1,8 +1,9 @@
-variables:
-  PRODUCT: token
-
 build:token:
+  variables:
+    PRODUCT: token
   extends: .build
 
 push:token:
+  variables:
+    PRODUCT: token
   extends: .push
