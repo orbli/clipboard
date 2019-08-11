@@ -22,7 +22,10 @@ func main() {
 		&subscriber.UserSubscriber{service.Client()},
 		server.SubscriberQueue("orbli.micro.usertoken"),
 	)
-	pb.RegisterUsertokenServiceHandler(service.Server(), &handler.UsertokenService{service.Client()})
+	pb.RegisterUsertokenServiceHandler(
+		service.Server(),
+		&handler.UsertokenService{service.Client()},
+	)
 	if err := service.Run(); err != nil {
 		log.Fatal(err)
 	}

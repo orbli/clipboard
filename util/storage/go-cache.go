@@ -43,18 +43,3 @@ func (s StorageGocacheImpl) ListByKey(key string, size int) ([]Value, string, er
 	}
 	return rt, "", nil
 }
-func (s StorageGocacheImpl) ListByOffset(offset int, size int) ([]Value, error) {
-	rt := []Value{}
-	for _, v := range s.c.Items() {
-		if offset != 0 {
-			offset -= 1
-			continue
-		}
-		if size == 0 {
-			return rt, nil
-		}
-		rt = append(rt, v.Object.(Value))
-		size -= 1
-	}
-	return rt, nil
-}

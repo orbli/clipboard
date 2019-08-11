@@ -65,7 +65,3 @@ func (s StorageGormSqlImpl) Delete(key string) error {
 func (s StorageGormSqlImpl) ListByKey(key string, size int) ([]storage.Value, string, error) {
 	panic("Not yet implement je")
 }
-
-func (s StorageGormSqlImpl) ListByOffset(offset int, size int) ([]storage.Value, error) {
-	panic("Not yet implement je")
-}
